@@ -7,27 +7,21 @@ Smart Room is an intelligent solution that uses advanced technology to monitor t
 # Tools
 The microcontroller used is the ESP8266 which is integrated with WiFi which functions to control and process various components.
 1. Temperature and Humidity Sensor (DHT22)
-   ![image(5)](https://github.com/ramizass/smartroomiot/assets/88464165/df4f9c33-15d1-479f-9645-80fe41d856d9)
-
 2. Fire Sensor
-   ![image(6)](https://github.com/ramizass/smartroomiot/assets/88464165/6279c697-728d-4105-ba59-6343f3700dc1)
-
 3. Air Quality Sensor (MQ-2)
-   ![image(4)](https://github.com/ramizass/smartroomiot/assets/88464165/df37a511-e84a-4896-b6bb-02932f6ba655)
-
 4. Motor Servo
-   ![image(1)](https://github.com/ramizass/smartroomiot/assets/88464165/74254e5c-a4e9-490b-803d-46a72424f561)
-
 5. Mini Fan
-   ![image(3)](https://github.com/ramizass/smartroomiot/assets/88464165/72ef0c55-f305-4601-b143-199ef0e5aedd)
-
 6. Buzzer
-   ![image(2)](https://github.com/ramizass/smartroomiot/assets/88464165/5f685d32-e3dc-414d-9491-6534cc476242)
-
 7. LCD
-    ![DS-LCD-162A-B-800x800](https://github.com/ramizass/smartroomiot/assets/88464165/173f2262-89b6-4b17-b973-301f5e602e77)
-
-
 
 # Block Diagram
 ![image](https://github.com/ramizass/smartroomiot/assets/88464165/7d4163f1-e12b-41b8-b1ef-8452bd7d320c)
+
+1. Temperature and Humidity Sensors will continue to monitor environmental conditions. When the temperature rises above a certain limit, the sensor detects this change.
+2. The Fire Sensor will continue to monitor for fires or abnormal temperatures. When the sensor detects a fire or temperature that has the potential to cause a fire, a signal will be sent to the system.
+3. Air quality sensors will be used to monitor the quality of the surrounding air. If air quality worsens, the sensor will provide warnings or information necessary so that action can be taken according to the conditions that are occurring.
+4. Data Processing Process: Signals from these sensors will be processed by the microcontroller installed in the system. The processor will evaluate the data received and make decisions based on temperature conditions, air quality and also fire detection.
+5. Servo Settings: If the two DHT22 and MQ-2 sensors detect a temperature above 30°C and there is a fire, the servo will move to direct something and the buzzer will sound. The example used in this tool is that the servo will open the window automatically.
+6. Fan Settings: If the temperature sensor is above 30°C without a fire being detected or detects poor air quality without a fire being detected, the fan will be activated to help cool the surrounding environment.
+7. Entering Data into the Database: The results of the data processing process will be entered into the database using Firebase which uses WiFi connectivity to be processed and displayed in the application.
+8. Display in Application: will use an application which will display temperature & humidity, air quality and fire detection in Real-Time and will display a notification if it detects fire.
