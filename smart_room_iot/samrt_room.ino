@@ -20,8 +20,8 @@ const int buzz = D6;
 #include "addons/TokenHelper.h"
 #include <addons/RTDBHelper.h>
 
-#define WIFI_SSID "Cremona Lt 2"
-#define WIFI_PASSWORD "12345678"
+#define WIFI_SSID "YOUR WIFI USERNAME"
+#define WIFI_PASSWORD "YOUR WIFI PASSWORD"
 #define API_KEY "YOUR_FIREBASE_API"
 #define DATABASE_URL "YOUR FIREBASE URL"
 
