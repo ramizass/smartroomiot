@@ -22,8 +22,8 @@ const int buzz = D6;
 
 #define WIFI_SSID "Cremona Lt 2"
 #define WIFI_PASSWORD "12345678"
-#define API_KEY "AIzaSyDa9mqpSKBWO7kyJ_Jw9op4x8c9jd88RGg"
-#define DATABASE_URL "https://smart-room-64cf8-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define API_KEY "YOUR_FIREBASE_API"
+#define DATABASE_URL "YOUR FIREBASE URL"
 
 FirebaseData fbdo;
 FirebaseAuth auth;
