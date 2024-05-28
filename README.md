@@ -15,4 +15,4 @@ The microcontroller used is the ESP8266 which is integrated with WiFi which func
 7. LCD
 
 #Block Diagram
-![image](https://github.com/ramizass/smartroomiot/assets/88464165/9d9c122c-06e7-4bca-9965-7afb6a973747)
+![image](https://github.com/ramizass/smartroomiot/assets/88464165/7d4163f1-e12b-41b8-b1ef-8452bd7d320c)
