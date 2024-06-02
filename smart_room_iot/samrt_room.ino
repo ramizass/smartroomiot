@@ -1,7 +1,7 @@
-#include "DHT.h"
-#include <Servo.h>
+#include "DHT.h" //library DHT
+#include <Servo.h> //library servo
 
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h> //library lcd
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 #define FAN_PIN D3
@@ -28,7 +28,6 @@ const int buzz = D6;
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
-
 
 unsigned long dataMillis = 0;
 bool signupOK = false;
