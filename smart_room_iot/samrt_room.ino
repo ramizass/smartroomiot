@@ -1,18 +1,18 @@
-#include "DHT.h" //library DHT
-#include <Servo.h> //library servo
+#include "DHT.h" //DHT library 
+#include <Servo.h> //servo library 
 
-#include <LiquidCrystal_I2C.h> //library lcd
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+#include <LiquidCrystal_I2C.h> //lcd library
+LiquidCrystal_I2C lcd(0x27, 16, 2); //0x27 -> address bus; 16x2: coloumns x rows
 
-#define FAN_PIN D3
-#define flamePin D5        // Deklarasi pin flame
-#define mqPin A0          // Deklarasi pin mq2
-#define DHTPIN D4         // Deklarasi pin DHT
-#define DHTTYPE DHT22     // Tipe sensor DHT
-DHT dht(DHTPIN, DHTTYPE); // Inisialisasi sensor DHT
+#define FAN_PIN D3        //relay pin
+#define flamePin D5        //flame pin
+#define mqPin A0          //mq2 pin
+#define DHTPIN D4         //DHT pin
+#define DHTTYPE DHT22     //DHT type
+DHT dht(DHTPIN, DHTTYPE); //make an object for dht with param: dhtpin and dhttype
 
-Servo siservo;
-const int buzz = D6;
+Servo siservo; //make a siservo object from func Servo
+const int buzz = D6; //buzzer constant with int data type
 
 // wifi
 #include <ESP8266WiFi.h>
@@ -25,7 +25,8 @@ const int buzz = D6;
 #define API_KEY "YOUR_FIREBASE_API"
 #define DATABASE_URL "YOUR FIREBASE URL"
 
-FirebaseData fbdo;
+//firebase object
+FirebaseData fbdo; 
 FirebaseAuth auth;
 FirebaseConfig config;
 
@@ -33,34 +34,35 @@ unsigned long dataMillis = 0;
 bool signupOK = false;
 
 void setup() {
-  Serial.begin(9600);
-  dht.begin(); 
-  siservo.attach(D7);  // Connect the servo to pin 2  
-  pinMode(buzz, OUTPUT);
-  relay1:pinMode(FAN_PIN,OUTPUT);
+  Serial.begin(9600); //set baud rate
+  dht.begin(); //set up dht
+  siservo.attach(D7);  //connect the servo to pin 9  
+  pinMode(buzz, OUTPUT); //set buzzer to output
+  pinMode(FAN_PIN,OUTPUT); //set relay to output
 
+  //set up wifi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while(WiFi.status() != WL_CONNECTED){
     Serial.print("."); delay(300);
-  }
+  } //loop until connected
   Serial.println();
   Serial.print("Connected with IP: ");
   Serial.println(WiFi.localIP());
   Serial.println();
-  config.api_key = API_KEY;
-  config.database_url = DATABASE_URL;
-  if(Firebase.signUp(&config, &auth, "", "")){
+  config.api_key = API_KEY; //config the api
+  config.database_url = DATABASE_URL; //config the url
+  if(Firebase.signUp(&config, &auth, "", "")){ //signing the anonym user with objects without email n pass
     Serial.println("signUp OK");
-    signupOK = true;
+    signupOK = true; 
   } else{
-    Serial.printf("%s\n", config.signer.signupError.message.c_str());
+    Serial.printf("%s\n", config.signer.signupError.message.c_str()); //error message
   }
 
-  config.token_status_callback = tokenStatusCallback;
-  Firebase.begin(&config, &auth);
-  Firebase.reconnectWiFi(true); 
+  config.token_status_callback = tokenStatusCallback; //handle changing token
+  Firebase.begin(&config, &auth); //set up firebase with objects
+  Firebase.reconnectWiFi(true); //auto reconnect to wifi
 
-  lcd.init();
+  lcd.init(); //set up or initialization
   lcd.backlight();
   lcd.setCursor(6,0); lcd.print("Smart");
   lcd.setCursor(6,1); lcd.print("Room");
@@ -69,14 +71,15 @@ void setup() {
 }
 
 void loop() {
+  //read the data from sensor and save it to variable
   int bacaApi = digitalRead(flamePin);
   int gasState = analogRead(mqPin);
-  float suhu = dht.readTemperature();     // Baca suhu
+  float suhu = dht.readTemperature(); //calling method from dht library
   float kelembapan = dht.readHumidity(); 
 
-  siservo.write(0);
+  siservo.write(0); //set the default state
   
-  //Mengatur kondisi kipas dan servo berdasarkan suhu, gas, dan sensor flame
+  //set up the condition
   if (suhu > 32 && gasState < 600 && bacaApi == HIGH) { 
     digitalWrite(FAN_PIN, HIGH); 
     siservo.write(180);
@@ -97,27 +100,16 @@ void loop() {
     siservo.write(180);
     noTone(buzz);
 
-} else if (suhu < 32 && gasState < 600 && bacaApi == LOW) { // Tambahkan kondisi suhu dan gasState
+} else if (suhu < 32 && gasState < 600 && bacaApi == LOW) {
     digitalWrite(FAN_PIN, LOW);
     siservo.write(0);
-    noTone(buzz); // Mematikan buzzer saat api tidak terdeteksi
+    noTone(buzz);
 
-} else if ( bacaApi == LOW) { // Kondisi api terdeteksi, tapi suhu dan gasState diabaikan
-    digitalWrite(FAN_PIN, HIGH);
-    tone(buzz, 250);
-    siservo.write(180);
-
-} else { // Kondisi default
+} else {
     digitalWrite(FAN_PIN, LOW);
     siservo.write(0);
     noTone(buzz);
 }
-
-  // else if (suhu <30 && gasState < 600 && bacaApi == LOW){ //konfisi testing doang
-  //   digitalWrite(FAN_PIN, HIGH);
-  //   siservo.write(180);
-  //   tone(buzz, 250);
-  // } 
   
   sens_dht22(suhu, kelembapan);
   sens_mq2(gasState);
@@ -126,7 +118,7 @@ void loop() {
 }
 
 void sens_dht22(float suhu, float kelembapan){
-  if (isnan(kelembapan) || isnan(suhu)) {
+  if (isnan(kelembapan) || isnan(suhu)) { //if the data not a number
     Serial.println("Suhu dan kelembaban tidak terbaca!");
     return;
   }
@@ -139,12 +131,12 @@ void sens_dht22(float suhu, float kelembapan){
   lcd.setCursor(0, 1); lcd.print("Humidity:"); 
   lcd.setCursor(9, 1); lcd.print(kelembapan);
 
-  if(Firebase.RTDB.setFloat(&fbdo, "Sensor/Suhu", suhu)){
+  if(Firebase.RTDB.setFloat(&fbdo, "Sensor/Suhu", suhu)){ //setFloat func for the objects
       Serial.print(suhu);
-      Serial.print(" - successfully saved to: " + fbdo.dataPath());
-      Serial.println(" (" + fbdo.dataType() + ")");
+      Serial.print(" - successfully saved to: " + fbdo.dataPath()); //get the path
+      Serial.println(" (" + fbdo.dataType() + ")"); //get the data type
     } else{
-      Serial.println("Failed: " + fbdo.errorReason());
+      Serial.println("Failed: " + fbdo.errorReason()); //error message
     }
 
     if(Firebase.RTDB.setFloat(&fbdo, "Sensor/Kelembapan", kelembapan)){
@@ -164,7 +156,7 @@ void sens_mq2(int gasState){
     lcd.setCursor(12, 0); lcd.print(gasState);
     
   Serial.println(gasState);
-  if(gasState > 580){
+  if(gasState > 600){
     Serial.println("Gas detected\n");
     lcd.setCursor(0, 1); lcd.print("Udara Kotor");
   }
@@ -188,7 +180,7 @@ void sens_Flame(int api){
   String strApi = "";
   Serial.println("Output Sensor Api :");
   lcd.setCursor(0, 0); lcd.print("Pendeteksi Api :"); 
-  if (api == LOW) {             // Cek apakah flame terdeteksi
+  if (api == LOW) {
     strApi = "YES";
     Serial.println("Flame detected\n");
     lcd.setCursor(0, 1); lcd.print("Ada APi!!!!!");
