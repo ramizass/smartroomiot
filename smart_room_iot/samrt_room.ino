@@ -20,10 +20,10 @@ const int buzz = D6; //buzzer constant with int data type
 #include "addons/TokenHelper.h"
 #include <addons/RTDBHelper.h>
 
-#define WIFI_SSID "YOUR WIFI USERNAME"
-#define WIFI_PASSWORD "YOUR WIFI PASSWORD"
-#define API_KEY "YOUR_FIREBASE_API"
-#define DATABASE_URL "YOUR FIREBASE URL"
+#define WIFI_SSID "YOUR SSID"
+#define WIFI_PASSWORD "YOU WIFI PASSWORD"
+#define API_KEY "YOUR DATABASE API"
+#define DATABASE_URL "YOUR DATABASE URL"
 
 //firebase object
 FirebaseData fbdo; 
@@ -31,7 +31,7 @@ FirebaseAuth auth;
 FirebaseConfig config;
 
 unsigned long dataMillis = 0;
-bool signupOK = false;
+bool signupOK = false; //set default condition
 
 void setup() {
   Serial.begin(9600); //set baud rate
@@ -74,43 +74,44 @@ void loop() {
   //read the data from sensor and save it to variable
   int bacaApi = digitalRead(flamePin);
   int gasState = analogRead(mqPin);
-  float suhu = dht.readTemperature(); //calling method from dht library
+  float suhu = dht.readTemperature(); //calling method from dht library 
   float kelembapan = dht.readHumidity(); 
 
   siservo.write(0); //set the default state
   
   //set up the condition
-  if (suhu > 32 && gasState < 600 && bacaApi == HIGH) { 
+  if (suhu > 32 && gasState < 600 && bacaApi == HIGH) { //temperature
     digitalWrite(FAN_PIN, HIGH); 
     siservo.write(180);
     noTone(buzz);
 
-} else if (suhu > 32 && gasState > 600 && bacaApi == LOW) {
+} else if (suhu > 32 && gasState > 600 && bacaApi == LOW) { //temperature, gas, and flame
     digitalWrite(FAN_PIN, LOW);
     siservo.write(180);
     tone(buzz, 250);
 
-} else if (suhu > 32 && gasState > 600 && bacaApi == HIGH) {
+} else if (suhu > 32 && gasState > 600 && bacaApi == HIGH) { //temperature and gas
     digitalWrite(FAN_PIN, HIGH);
     siservo.write(180);
     noTone(buzz);
 
-} else if (suhu < 32 && gasState > 600 && bacaApi == HIGH) {
+} else if (suhu < 32 && gasState > 600 && bacaApi == HIGH) { //gas 
     digitalWrite(FAN_PIN, HIGH);
     siservo.write(180);
     noTone(buzz);
 
-} else if (suhu < 32 && gasState < 600 && bacaApi == LOW) {
+} else if (suhu < 32 && gasState < 600 && bacaApi == LOW) { //flame
     digitalWrite(FAN_PIN, LOW);
-    siservo.write(0);
-    noTone(buzz);
+    siservo.write(180);
+    tone(buzz, 250);
 
-} else {
+} else { //nothing
     digitalWrite(FAN_PIN, LOW);
     siservo.write(0);
     noTone(buzz);
 }
   
+  //calling the function
   sens_dht22(suhu, kelembapan);
   sens_mq2(gasState);
   sens_Flame(bacaApi);
@@ -177,7 +178,7 @@ void sens_mq2(int gasState){
 }
 
 void sens_Flame(int api){
-  String strApi = "";
+  String strApi = ""; //blank variable for "YES" or "NO"
   Serial.println("Output Sensor Api :");
   lcd.setCursor(0, 0); lcd.print("Pendeteksi Api :"); 
   if (api == LOW) {
